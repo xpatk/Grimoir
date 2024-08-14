@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 
+const Book = require("./models/Book");
+
 app.use(express.json());
 
 mongoose
@@ -26,10 +28,14 @@ app.use((req, res, next) => {
 });
 
 app.post("/api/books", (req, res, next) => {
-  console.log(req.body);
-  res.status(201).json({
-    message: "Book added",
+  delete req.body._id;
+  const book = new Book({
+    ...req.body,
   });
+  book
+    .save()
+    .then(() => res.status(201))
+    .catch((error) => res.status(400).json({ error }));
 });
 
 app.get("/api/books", (req, res, next) => {
