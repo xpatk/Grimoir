@@ -1,5 +1,16 @@
 const express = require("express");
 const app = express();
+const mongoose = require("mongoose");
+
+app.use(express.json());
+
+mongoose
+  .connect(
+    "mongodb+srv://GrimoirUser:UserG@cluster0.snlkboy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+    { useNewUrlParser: true, useUnifiedTopology: true }
+  )
+  .then(() => console.log("Connexion à MongoDB réussie !"))
+  .catch(() => console.log("Connexion à MongoDB échouée !"));
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -14,7 +25,14 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use("/api/books", (req, res, next) => {
+app.post("/api/books", (req, res, next) => {
+  console.log(req.body);
+  res.status(201).json({
+    message: "Book added",
+  });
+});
+
+app.get("/api/books", (req, res, next) => {
   const books = [
     {
       _id: "oeihfzeoi",
