@@ -1,24 +1,42 @@
 const Book = require("../models/Book");
 const fs = require("fs");
+const sharp = require("sharp");
+const path = require("path");
 
 exports.createBook = (req, res, next) => {
   const bookObject = JSON.parse(req.body.book);
   delete bookObject._id;
   delete bookObject._userId;
-  const book = new Book({
-    ...bookObject,
-    userId: req.auth.userId,
-    imageUrl: `${req.protocol}://${req.get("host")}/images/${
-      req.file.filename
-    }`,
-  });
-  book
-    .save()
-    .then(() => {
-      res.status(201).json({ message: "Book enregistré !" });
-    })
-    .catch((error) => {
-      res.status(400).json({ error });
+
+  const tempPath = path.join("images/temp", req.file.filename);
+  const optimizedPath = path.join("images", `optimized_${req.file.filename}`);
+
+  sharp(tempPath)
+    .resize({ width: 500 })
+    .toFormat("webp")
+    .toFile(optimizedPath, (error) => {
+      if (error) {
+        return res.status(500).json({ error });
+      }
+
+      fs.unlink(tempPath, (error) => {
+        if (error) {
+          return res.status(500).json({ error });
+        }
+
+        const book = new Book({
+          ...bookObject,
+          userId: req.auth.userId,
+          imageUrl: `${req.protocol}://${req.get("host")}/images/optimized_${
+            req.file.filename
+          }`,
+        });
+
+        book
+          .save()
+          .then(() => res.status(201).json({ message: "Book enregistré !" }))
+          .catch((error) => res.status(400).json({ error }));
+      });
     });
 };
 
