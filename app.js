@@ -1,5 +1,6 @@
 const express = require("express");
 const app = express();
+const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const booksRoutes = require("./routes/books");
 const userRoutes = require("./routes/user");
@@ -28,6 +29,8 @@ app.use((req, res, next) => {
   );
   next();
 });
+
+app.use(bodyParser.json());
 
 app.use("/api/books", booksRoutes);
 app.use("/api/auth", userRoutes);
