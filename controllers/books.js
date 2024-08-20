@@ -1,43 +1,40 @@
 const Book = require("../models/Book");
-const fs = require("fs");
 const sharp = require("sharp");
 const path = require("path");
 
 exports.createBook = (req, res, next) => {
-  const bookObject = JSON.parse(req.body.book);
-  delete bookObject._id;
-  delete bookObject._userId;
+  try {
+    const bookObject = JSON.parse(req.body.book);
+    delete bookObject._id;
+    delete bookObject._userId;
 
-  const tempPath = path.join("images/temp", req.file.filename);
-  const optimizedPath = path.join("images", `optimized_${req.file.filename}`);
+    const originalFilename = req.file.originalname
+      .split(" ")
+      .join("_")
+      .split(".")[0];
+    const optimizedPath = path.join("images", `${originalFilename}.webp`);
 
-  sharp(tempPath)
-    .resize({ width: 500 })
-    .toFormat("webp")
-    .toFile(optimizedPath, (error) => {
-      if (error) {
-        return res.status(500).json({ error });
-      }
-
-      fs.unlink(tempPath, (error) => {
-        if (error) {
-          return res.status(500).json({ error });
-        }
-
+    sharp(req.file.buffer)
+      .toFormat("webp")
+      .toFile(optimizedPath)
+      .then(() => {
         const book = new Book({
           ...bookObject,
           userId: req.auth.userId,
-          imageUrl: `${req.protocol}://${req.get("host")}/images/optimized_${
-            req.file.filename
-          }`,
+          imageUrl: `${req.protocol}://${req.get(
+            "host"
+          )}/images/${originalFilename}.webp`,
         });
 
         book
           .save()
           .then(() => res.status(201).json({ message: "Book enregistré !" }))
           .catch((error) => res.status(400).json({ error }));
-      });
-    });
+      })
+      .catch((error) => res.status(500).json({ error }));
+  } catch (error) {
+    return res.status(400).json({ error });
+  }
 };
 
 exports.modifyBook = (req, res, next) => {
