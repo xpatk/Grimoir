@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
@@ -11,7 +12,7 @@ app.use("/images", express.static(path.join(__dirname, "images")));
 
 mongoose
   .connect(
-    "mongodb+srv://GrimoirUser:UserG@cluster0.snlkboy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0",
+    `mongodb+srv://${process.env.USER_KEY}:${process.env.USER_PSWD}@cluster0.snlkboy.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0`,
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => console.log("Connexion à MongoDB réussie !"))
