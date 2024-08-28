@@ -35,4 +35,4 @@ The application connects to a MongoDB database hosted on MongoDB Atlas.
    USER_KEY=testuser
    USER_PSWD=testuser123
 
-   USER has READONLY rights. Otherwise you need to set up a connection to your own database cluster. 
+testuser has READONLY rights. Otherwise you need to set up a connection to your own database cluster. 
