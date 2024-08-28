@@ -135,3 +135,12 @@ exports.rateBook = async (req, res, next) => {
     res.status(500).json({ error });
   }
 };
+
+exports.getBestBooks = async (req, res, next) => {
+  try {
+    const books = await Book.find().sort({ averageRating: -1 }).limit(3);
+    res.status(200).json(books);
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+};
