@@ -17,7 +17,6 @@ The application connects to a MongoDB database hosted on MongoDB Atlas.
 
 1. **Clone the repository:**
 
-   ```bash
  git clone https://github.com/xpatk/Grimoir.git
 
 ### Setting Up Environment Variables
