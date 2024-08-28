@@ -33,5 +33,7 @@ The application connects to a MongoDB database hosted on MongoDB Atlas.
    Example `.env` configuration for a custom MongoDB database:
 
    ```env
-   USER_KEY=yourMongoDBUsername
-   USER_PSWD=yourMongoDBPassword
+   USER_KEY=testuser
+   USER_PSWD=testuser123
+
+   USER has READONLY rights. Otherwise you need to set up a connection to your own database cluster. 
